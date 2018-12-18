@@ -1,0 +1,15 @@
+requests==2.21.0
+lxml==4.2.5
+alembic==1.0.5
+feedparser==5.2.1
+## The following requirements were added by pip freeze:
+certifi==2018.11.29
+chardet==3.0.4
+idna==2.8
+Mako==1.0.7
+MarkupSafe==1.1.0
+python-dateutil==2.7.5
+python-editor==1.0.3
+six==1.12.0
+SQLAlchemy==1.2.15
+urllib3==1.24.1
