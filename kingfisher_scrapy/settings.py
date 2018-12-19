@@ -73,6 +73,10 @@ ITEM_PIPELINES = {
 
 FILES_STORE = 'data'
 
+KINGFISHER_API_URI = 'https://kingfisher.example/api/'
+KINGFISHER_API_ITEM_URI = 'https://kingfisher.example/item/'
+KINFISHER_API_KEY = 'lesserspottedowl'
+
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See http://doc.scrapy.org/en/latest/topics/autothrottle.html
 #AUTOTHROTTLE_ENABLED = True
