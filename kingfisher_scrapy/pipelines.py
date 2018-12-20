@@ -78,7 +78,7 @@ class KingfisherPostPipeline(object):
 
     def process_item(self, item, spider):
         url = self._build_api_url(spider)
-        local_path = item.get("local_path")
+        # local_path = item.get("local_path")
         print(url)
         print(item)
         return item

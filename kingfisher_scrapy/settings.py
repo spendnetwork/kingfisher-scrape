@@ -69,6 +69,7 @@ ROBOTSTXT_OBEY = True
 #}
 ITEM_PIPELINES = {
     'kingfisher_scrapy.pipelines.KingfisherFilesPipeline': 1,
+    'kingfisher_scrapy.pipelines.KingfisherPostPipeline': 2,
 }
 
 FILES_STORE = 'data'
