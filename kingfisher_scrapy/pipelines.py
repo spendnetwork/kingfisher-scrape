@@ -16,11 +16,15 @@ from scrapy.http import FormRequest
 
 class KingfisherFilesPipeline(FilesPipeline):
 
-    def file_path(self, request, response=None, info=None):
-        stats = info.spider.crawler.stats.get_stats()
+    def _get_start_time(self, spider):
+        stats = spider.crawler.stats.get_stats()
         start_time = stats.get("start_time")
+        return start_time
+
+    def file_path(self, request, response=None, info=None):
+        start_time = self._get_start_time(info.spider)
         start_time_str = start_time.strftime("%Y%m%d_%H%M%S")
-        
+
         url = request.url
         media_guid = hashlib.sha1(to_bytes(url)).hexdigest()
         media_ext = os.path.splitext(url)[1]
@@ -31,41 +35,55 @@ class KingfisherFilesPipeline(FilesPipeline):
         return '%s/%s/%s%s' % (info.spider.name, start_time_str, media_guid, media_ext)
 
     def item_completed(self, results, item, info):
-
         """
         This is triggered when a JSON file has finished downloading.
         """
 
+        files_store = info.spider.crawler.settings.get("FILES_STORE")
+
         completed_files = []
 
         for ok, file_data in results:
-            file_url = file_data.get("url")
-            local_path = file_data.get("path")
+            if ok:
+                file_url = file_data.get("url")
+                local_path = os.path.join(files_store, file_data.get("path"))
 
-            item_data = {
-                "collection_source": info.spider.name,
-                "collection_data_version": "??",
-                "file_name": "TODO.json",  # TODO set to original filename?
-                "file_url": file_url,
-                "file_data_type": item.get("data_type"),
-                "file_encoding": "",
-                "local_path": local_path
-            }
+                start_time = self._get_start_time(info.spider)
 
-            completed_files.append(item_data)
+                item_data = {
+                    "collection_source": info.spider.name,
+                    "collection_data_version": start_time.strftime("%Y-%m-%d %H:%M:%S"),
+                    "file_name": local_path,
+                    "file_url": file_url,
+                    "file_data_type": item.get("data_type"),
+                    "file_encoding": "utf-8",
+                    "local_path": local_path
+                }
+
+                completed_files.append(item_data)
 
         return completed_files
-
-            
 
 
 class KingfisherPostPipeline(object):
 
+    def __init__(self, crawler):
+        self.crawler = crawler
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(crawler)
+
     def _build_api_url(self, spider):
-        api_uri = spider.settings['KINGFISHER_API_URI']
+        api_uri = spider.settings['KINGFISHER_API_FILE_URI']
         api_item_uri = spider.settings['KINGFISHER_API_ITEM_URI']
         api_key = spider.settings['KINGFISHER_API_KEY']
-        
+
+        # TODO: figure out which api endpoint based on the data_type
+
+        print(api_uri)
+        print(api_key)
+
         # TODO: deprecate this. We want to send key in Auth header when possible
         params = {"API_KEY": api_key}
         url_parts = list(urllib.parse.urlparse(api_uri))
@@ -78,22 +96,25 @@ class KingfisherPostPipeline(object):
 
     def process_item(self, item, spider):
         url = self._build_api_url(spider)
-        # local_path = item.get("local_path")
-        print(url)
-        print(item)
+        for completed in item:
+            
+            local_path = completed.get("local_path")
+            # files = {'file': open(local_path, 'rb')}
+            # completed['file'] = files
+
+            # or load json from file and send in 'body'?
+            # body=json.loads(file_contents)
+
+            post_request = FormRequest(
+                url=url,
+                formdata=completed,
+                headers={'Content-Type': 'multipart/form-data'},
+                callback=self.test,
+            )
+            print(post_request)
+            self.crawler.engine.crawl(post_request, spider)
+
         return item
 
-        # ????
-        # request = scrapy.Request(url)
-        # dfd = spider.crawler.engine.download(request, spider)
-        # dfd.addBoth(self.return_item, item)
-        # return dfd
-
-        # with open(local_path, 'rb') as file:
-        #     yield FormRequest(
-        #         url,
-        #         formdata=item,
-        #         files={file_url: file},
-        #         headers={'Content-Type': 'multipart/form-data'}
-        #     )
-
+    def test(self, response):
+        print(response)
