@@ -35,6 +35,7 @@ class KingfisherFilesPipeline(FilesPipeline):
         return '%s/%s/%s%s' % (info.spider.name, start_time_str, media_guid, media_ext)
 
     def item_completed(self, results, item, info):
+
         """
         This is triggered when a JSON file has finished downloading.
         """
