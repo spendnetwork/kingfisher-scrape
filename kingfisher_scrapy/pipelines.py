@@ -8,6 +8,7 @@
 import os
 import hashlib
 import urllib.parse
+import requests
 
 from scrapy.pipelines.files import FilesPipeline
 from scrapy.utils.python import to_bytes
@@ -82,9 +83,6 @@ class KingfisherPostPipeline(object):
 
         # TODO: figure out which api endpoint based on the data_type
 
-        print(api_uri)
-        print(api_key)
-
         # TODO: deprecate this. We want to send key in Auth header when possible
         params = {"API_KEY": api_key}
         url_parts = list(urllib.parse.urlparse(api_uri))
@@ -106,14 +104,17 @@ class KingfisherPostPipeline(object):
             # or load json from file and send in 'body'?
             # body=json.loads(file_contents)
 
-            post_request = FormRequest(
-                url=url,
-                formdata=completed,
-                headers={'Content-Type': 'multipart/form-data'},
-                callback=self.test,
-            )
-            print(post_request)
-            self.crawler.engine.crawl(post_request, spider)
+            # post_request = FormRequest(
+            #     url=url,
+            #     formdata=completed,
+            #     headers={'Content-Type': 'multipart/form-data'},
+            #     callback=self.test,
+            # )
+            # print(post_request)
+            # self.crawler.engine.crawl(post_request, spider)
+
+            r = requests.post(url, data=completed)
+            print(r.text)
 
         return item
 
