@@ -14,7 +14,7 @@ import urllib.parse
 from scrapy.pipelines.files import FilesPipeline
 from scrapy.utils.python import to_bytes
 from scrapy.exceptions import DropItem
-from scrapy.http import FormRequest
+from scrapy.http import Request, FormRequest
 
 
 class KingfisherFilesPipeline(FilesPipeline):
