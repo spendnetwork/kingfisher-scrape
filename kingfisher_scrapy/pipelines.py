@@ -43,9 +43,9 @@ class KingfisherFilesPipeline(FilesPipeline):
         """
 
         if(hasattr(info.spider, 'sample') and info.spider.sample == 'true'):
-            is_sample = 1
+            is_sample = '1'
         else:
-            is_sample = 0
+            is_sample = '0'
         
         files_store = info.spider.crawler.settings.get("FILES_STORE")
 
@@ -105,8 +105,8 @@ class KingfisherPostPipeline(object):
         for completed in item:
             
             local_path = completed.get("local_path")
-            # files = {'file': open(local_path, 'rb')}
-            # completed['file'] = files
+            files = {'file': open(local_path, 'rb')}
+            completed['file'] = files
 
             # or load json from file and send in 'body'?
             # body=json.loads(file_contents)
