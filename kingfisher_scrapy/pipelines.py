@@ -7,11 +7,12 @@
 
 import os
 import hashlib
-import urllib.parse
 import requests
+import urllib.parse
 
 from scrapy.pipelines.files import FilesPipeline
 from scrapy.utils.python import to_bytes
+from scrapy.exceptions import DropItem
 from scrapy.http import FormRequest
 
 
