@@ -115,7 +115,7 @@ class KingfisherPostPipeline(object):
             # TODO: figure out what is wrong with Form Request
             post_request = FormRequest(
                 url=url,
-                # formdata=completed,
+                formdata=completed,
                 body=json.dumps(completed),
                 headers={'Content-Type': 'application/json'},
                 callback=self.test,
