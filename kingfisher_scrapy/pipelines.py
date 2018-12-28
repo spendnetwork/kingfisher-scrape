@@ -113,12 +113,18 @@ class KingfisherPostPipeline(object):
             # body=json.loads(file_contents)
 
             # TODO: figure out what is wrong with Form Request
-            post_request = FormRequest(
-                url=url,
-                formdata=completed,
+            # post_request = FormRequest(
+            #     url=url,
+            #     formdata=completed,
+            #     body=json.dumps(completed),
+            #     headers={'Content-Type': 'application/json'},
+            #     callback=self.test,
+            # )
+            post_request = Request(
+                url, 
+                method="POST", 
                 body=json.dumps(completed),
-                headers={'Content-Type': 'application/json'},
-                callback=self.test,
+                headers={'Content-Type': 'application/json'}
             )
             self.crawler.engine.crawl(post_request, spider)
 
