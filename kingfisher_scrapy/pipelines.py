@@ -42,6 +42,11 @@ class KingfisherFilesPipeline(FilesPipeline):
         This is triggered when a JSON file has finished downloading.
         """
 
+        if(hasattr(info.spider, 'sample') and info.spider.sample == 'true'):
+            is_sample = 1
+        else:
+            is_sample = 0
+        
         files_store = info.spider.crawler.settings.get("FILES_STORE")
 
         completed_files = []
@@ -56,6 +61,7 @@ class KingfisherFilesPipeline(FilesPipeline):
                 item_data = {
                     "collection_source": info.spider.name,
                     "collection_data_version": start_time.strftime("%Y-%m-%d %H:%M:%S"),
+                    "collection_sample": is_sample,
                     "file_name": local_path,
                     "file_url": file_url,
                     "file_data_type": item.get("data_type"),
