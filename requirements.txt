@@ -1,1 +1,2 @@
+requests
 scrapy >= 1.5.1
