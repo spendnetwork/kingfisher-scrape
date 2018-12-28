@@ -116,7 +116,7 @@ class KingfisherPostPipeline(object):
             post_request = FormRequest(
                 url=url,
                 # formdata=completed,
-                body=json.load(completed),
+                body=json.loads(completed),
                 headers={'Content-Type': 'application/json'},
                 callback=self.test,
             )
