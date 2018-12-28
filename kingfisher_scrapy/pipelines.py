@@ -6,6 +6,7 @@
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 
 import os
+import json
 import hashlib
 import requests
 import urllib.parse
