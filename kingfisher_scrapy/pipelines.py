@@ -106,22 +106,26 @@ class KingfisherPostPipeline(object):
             
             local_path = completed.get("local_path")
             files = {'file': open(local_path, 'rb')}
-            # completed['file'] = files
+            completed['file'] = files
 
             # or load json from file and send in 'body'?
             # body=json.loads(file_contents)
 
             # TODO: figure out what is wrong with Form Request
-            # post_request = FormRequest(
-            #     url=url,
-            #     formdata=completed,
-            #     headers={'Content-Type': 'multipart/form-data'},
-            #     callback=self.test,
-            # )
-            # self.crawler.engine.crawl(post_request, spider)
+            post_request = FormRequest(
+                url=url,
+                formdata=completed,
+                # headers={'Content-Type': 'multipart/form-data'},
+                callback=self.test,
+            )
+            self.crawler.engine.crawl(post_request, spider)
+            print(post_request.formdata)
 
             # Stopgap using `requests`
             # OR we need to separately log success/failure of these
-            response = requests.post(url, data=completed, files=files)
+            # response = requests.post(url, data=completed, files=files)
         
-        raise DropItem("Items posted..")
+        # raise DropItem("Items posted..")
+
+    def test(self, response):
+        print(response)
