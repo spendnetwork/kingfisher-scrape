@@ -105,8 +105,8 @@ class KingfisherPostPipeline(object):
         for completed in item:
             
             local_path = completed.get("local_path")
-            files = {'file': open(local_path, 'rb')}
-            completed['file'] = files
+            # files = {'file': open(local_path, 'rb')}
+            # completed['file'] = files
 
             # or load json from file and send in 'body'?
             # body=json.loads(file_contents)
