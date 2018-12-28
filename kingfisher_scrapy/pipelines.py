@@ -115,11 +115,10 @@ class KingfisherPostPipeline(object):
             post_request = FormRequest(
                 url=url,
                 formdata=completed,
-                # headers={'Content-Type': 'multipart/form-data'},
+                headers={'Content-Type': 'multipart/form-data'},
                 callback=self.test,
             )
             self.crawler.engine.crawl(post_request, spider)
-            print(post_request.formdata)
 
             # Stopgap using `requests`
             # OR we need to separately log success/failure of these
