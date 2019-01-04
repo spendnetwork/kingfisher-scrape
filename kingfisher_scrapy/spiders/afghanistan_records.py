@@ -15,6 +15,6 @@ class AfghanistanRecords(scrapy.Spider):
 
         for file_url in files_urls:
             yield {
-                'file_urls': [file_urls],
+                'file_urls': [file_url],
                 'data_type': 'record'
             }
