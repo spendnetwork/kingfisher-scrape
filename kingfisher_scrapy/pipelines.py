@@ -42,7 +42,7 @@ class KingfisherFilesPipeline(FilesPipeline):
         This is triggered when a JSON file has finished downloading.
         """
 
-        if(info.spider.sample):
+        if has_attr(info.spider, 'sample')  and info.spider.sample == 'true':
             is_sample = 1
         else:
             is_sample = 0
