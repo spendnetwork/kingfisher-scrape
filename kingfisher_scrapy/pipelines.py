@@ -12,7 +12,7 @@ import urllib.parse
 
 from scrapy.pipelines.files import FilesPipeline
 from scrapy.utils.python import to_bytes
-from scrapy.exceptions import DropItem
+from scrapy.exceptions import DropItem, NotConfigured
 from scrapy.http import FormRequest
 
 
@@ -78,15 +78,19 @@ class KingfisherPostPipeline(object):
 
     def __init__(self, crawler):
         self.crawler = crawler
+        self.api_url = self._build_api_url(crawler)
 
     @classmethod
     def from_crawler(cls, crawler):
         return cls(crawler)
 
-    def _build_api_url(self, spider):
-        api_uri = spider.settings['KINGFISHER_API_FILE_URI']
-        api_item_uri = spider.settings['KINGFISHER_API_ITEM_URI']
-        api_key = spider.settings['KINGFISHER_API_KEY']
+    def _build_api_url(self, crawler):
+        api_uri = crawler.settings['KINGFISHER_API_FILE_URI']
+        api_item_uri = crawler.settings['KINGFISHER_API_ITEM_URI']
+        api_key = crawler.settings['KINGFISHER_API_KEY']
+
+        if api_uri is None or api_item_uri is None or api_key is None:
+            raise NotConfigured('Kingfisher API not configured.')
 
         # TODO: figure out which api endpoint based on the data_type
 
@@ -101,7 +105,7 @@ class KingfisherPostPipeline(object):
         return url
 
     def process_item(self, item, spider):
-        url = self._build_api_url(spider)
+        url = self.api_url
         for completed in item:
             
             local_path = completed.get("local_path")
