@@ -15,6 +15,7 @@ from scrapy.utils.python import to_bytes
 from scrapy.exceptions import DropItem, NotConfigured
 from scrapy.http import FormRequest
 
+from kingfisher_scrapy.extensions import MultipartFormRequest
 
 class KingfisherFilesPipeline(FilesPipeline):
 
@@ -109,23 +110,18 @@ class KingfisherPostPipeline(object):
         for completed in item:
             
             local_path = completed.get("local_path")
-            files = {'file': open(local_path, 'rb')}
-            # completed['file'] = files
-
-            # or load json from file and send in 'body'?
-            # body=json.loads(file_contents)
-
-            # TODO: figure out what is wrong with Form Request
-            # post_request = FormRequest(
-            #     url=url,
-            #     formdata=completed,
-            #     headers={'Content-Type': 'multipart/form-data'},
-            #     callback=self.test,
-            # )
-            # self.crawler.engine.crawl(post_request, spider)
-
-            # Stopgap using `requests`
-            # OR we need to separately log success/failure of these
-            response = requests.post(url, data=completed, files=files)
+            # files = {'file': open(local_path, 'rb')}
+            # with open(local_path, 'rb') as file:
+            #     completed['file'] = file.read()
+    
+            post_request = MultipartFormRequest(
+                url=url,
+                formdata=completed,
+                callback = self.test
+            )
+            self.crawler.engine.crawl(post_request, spider)
         
         raise DropItem("Items posted..")
+
+    def test(self, response):
+        print(response)
