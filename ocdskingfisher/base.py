@@ -265,7 +265,7 @@ class Source:
             print("PUSHING TO SERVER NOW " + data['filename'] + " TO " + self.config.server_url + " KEY " + self.config.server_api_key)
 
             r = requests.post(
-                self.config.server_url + '/api/v1/submit/?API_KEY=' + self.config.server_api_key,
+                self.config.server_url + '/api/v1/submit/file/?API_KEY=' + self.config.server_api_key,
                 data={
                     'collection_source': self.source_id,
                     'collection_data_version': self.data_version,
