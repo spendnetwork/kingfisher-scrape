@@ -229,28 +229,7 @@ class Source:
 
                         print("PUSHING TO SERVER NOW NUMBER " + str(number) + " FILE  " + data['filename'] + " TO " + self.config.server_url + " KEY " + self.config.server_api_key)
 
-                        (tmp_file, tmp_filename) = tempfile.mkstemp(prefix="ocdskf-")
-                        os.close(tmp_file)
-
-                        f_write = open(tmp_filename, "w")
-                        f_write.write(raw_data)
-                        f_write.close()
-
-                        r = requests.post(
-                            self.config.server_url + '/api/v1/submit/item/?API_KEY=' + self.config.server_api_key,
-                            data={
-                                'collection_source': self.source_id,
-                                'collection_data_version': self.data_version,
-                                'collection_sample': 1 if self.sample else 0,
-                                'file_name': data['filename'],
-                                'file_url': data['url'],
-                                'file_data_type': data['data_type'],
-                                'file_encoding': data['encoding'],
-                                'number': number,
-                            },
-                            files={'file': open(tmp_filename, 'rb')}
-                        )
-                        print(r.text)
+                        ############## TODO this needs updating to the new way!!!!!!!!!!!!!!!!!!!!!!!!
 
                         raw_data = f.readline()
                         number += 1
@@ -258,24 +237,57 @@ class Source:
                 raise e
                 # TODO Store error in database and make nice HTTP response!
 
+        elif False:
+
+            # SEND WHOLE FILE IN ONE GO TO ITEM END POINT FOR A TEST!
+
+
+            print("PUSHING TO SERVER NOW NUMBER 1 FILE " + data['filename'] + " TO " + self.config.server_url + " KEY " + self.config.server_api_key)
+
+            body = {
+                'collection_source': self.source_id,
+                'collection_data_version': self.data_version,
+                'collection_sample': 1 if self.sample else 0,
+                'file_name': data['filename'],
+                'url': data['url'],
+                'data_type': data['data_type'],
+                'number': 1,
+            }
+
+            with open(os.path.join(self.full_directory, data['filename']), encoding=data['encoding']) as f:
+                body['data'] = json.load(f)
+
+            r = requests.post(
+                self.config.server_url + '/api/v1/submit/item/',
+                data=json.dumps(body),
+                headers={'content-type':'application/json','Authorization':'ApiKey '+ self.config.server_api_key},
+            )
+            print(r.text)
+
+
+
         else:
 
             # SEND WHOLE FILE IN ONE GO TO THE SERVER!
 
             print("PUSHING TO SERVER NOW " + data['filename'] + " TO " + self.config.server_url + " KEY " + self.config.server_api_key)
 
+            body = {
+                'collection_source': self.source_id,
+                'collection_data_version': self.data_version,
+                'collection_sample': 1 if self.sample else 0,
+                'file_name': data['filename'],
+                'url': data['url'],
+                'data_type': data['data_type'],
+            }
+
+            with open(os.path.join(self.full_directory, data['filename']), encoding=data['encoding']) as f:
+                body['data'] = json.load(f)
+
             r = requests.post(
-                self.config.server_url + '/api/v1/submit/file/?API_KEY=' + self.config.server_api_key,
-                data={
-                    'collection_source': self.source_id,
-                    'collection_data_version': self.data_version,
-                    'collection_sample': 1 if self.sample else 0,
-                    'file_name': data['filename'],
-                    'file_url': data['url'],
-                    'file_data_type': data['data_type'],
-                    'file_encoding': data['encoding'],
-                },
-                files={'file': open(os.path.join(self.full_directory, data['filename']), 'rb')}
+                self.config.server_url + '/api/v1/submit/file/',
+                data=json.dumps(body),
+                headers={'content-type':'application/json','Authorization':'ApiKey '+ self.config.server_api_key},
             )
             print(r.text)
 
