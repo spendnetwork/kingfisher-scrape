@@ -6,6 +6,7 @@
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 
 import os
+import json
 import hashlib
 import requests
 import urllib.parse
@@ -13,7 +14,7 @@ import urllib.parse
 from scrapy.pipelines.files import FilesPipeline
 from scrapy.utils.python import to_bytes
 from scrapy.exceptions import DropItem, NotConfigured
-from scrapy.http import FormRequest
+from scrapy.http import Request
 
 
 class KingfisherFilesPipeline(FilesPipeline):
@@ -109,23 +110,19 @@ class KingfisherPostPipeline(object):
         for completed in item:
             
             local_path = completed.get("local_path")
-            files = {'file': open(local_path, 'rb')}
-            # completed['file'] = files
+            with open(local_path) as json_file:
+                json_from_file = json.load(json_file)
 
-            # or load json from file and send in 'body'?
-            # body=json.loads(file_contents)
+            completed['data'] = json_from_file
 
-            # TODO: figure out what is wrong with Form Request
-            # post_request = FormRequest(
-            #     url=url,
-            #     formdata=completed,
-            #     headers={'Content-Type': 'multipart/form-data'},
-            #     callback=self.test,
-            # )
-            # self.crawler.engine.crawl(post_request, spider)
+            headers = {'Content-Type': 'application/json'}
 
-            # Stopgap using `requests`
-            # OR we need to separately log success/failure of these
-            response = requests.post(url, data=completed, files=files)
+            post_request = Request(
+                url=url,
+                method='POST',
+                body=json.dumps(completed),
+                headers=headers
+            )
+            self.crawler.engine.crawl(post_request, spider)
         
         raise DropItem("Items posted..")
