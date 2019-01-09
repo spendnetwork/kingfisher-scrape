@@ -25,6 +25,8 @@ To configure the scrapers' `kingfisher-process` endpoint:
 2. Set the `KINGFISHER_*` variables in `env.sh`.
 3. Run `source env.sh` to export them to the scraper environment.
 
+This is *optional*. If you don't set the `KINGFISHER_*` variables, this part of the pipeline is automatically disabled, and scraper results will only be saved to disc.
+
 ## Use
 
 ```
