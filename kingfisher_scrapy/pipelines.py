@@ -93,20 +93,13 @@ class KingfisherPostPipeline(object):
         if api_uri is None or api_item_uri is None or api_key is None:
             raise NotConfigured('Kingfisher API not configured.')
 
-        # TODO: figure out which api endpoint based on the data_type
+        # TODO: figure out which api endpoint based on the data_type OR probably metadata passed from the spider
 
-        # TODO: deprecate this. We want to send key in Auth header when possible
-        params = {"API_KEY": api_key}
-        url_parts = list(urllib.parse.urlparse(api_uri))
-        query = dict(urllib.parse.parse_qsl(url_parts[4]))
-        query.update(params)
-        url_parts[4] = urllib.parse.urlencode(query)
-        url = urllib.parse.urlunparse(url_parts)
-
-        return url
+        headers = {"Authorization": "ApiKey " + api_key}
+        return api_uri, headers
 
     def process_item(self, item, spider):
-        url = self.api_url
+        url, headers = self.api_url
         for completed in item:
             
             local_path = completed.get("local_path")
@@ -115,7 +108,7 @@ class KingfisherPostPipeline(object):
 
             completed['data'] = json_from_file
 
-            headers = {'Content-Type': 'application/json'}
+            headers['Content-Type'] = 'application/json'
 
             post_request = Request(
                 url=url,
