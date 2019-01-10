@@ -56,17 +56,22 @@ class KingfisherFilesPipeline(FilesPipeline):
             if ok:
                 file_url = file_data.get("url")
                 local_path = os.path.join(files_store, file_data.get("path"))
-
                 start_time = self._get_start_time(info.spider)
+                start_time_str = start_time.strftime("%Y-%m-%d %H:%M:%S")
+                data_type = item.get("data_type")
+
+                with open(local_path) as json_file:
+                    json_from_file = json.load(json_file)
 
                 item_data = {
                     "collection_source": info.spider.name,
-                    "collection_data_version": start_time.strftime("%Y-%m-%d %H:%M:%S"),
+                    "collection_data_version": start_time_str,
                     "collection_sample": is_sample,
                     "file_name": local_path,
                     "url": file_url,
-                    "data_type": item.get("data_type"),
-                    "local_path": local_path
+                    "data_type": data_type,
+                    "local_path": local_path,
+                    "data": json_from_file
                 }
 
                 completed_files.append(item_data)
@@ -101,20 +106,19 @@ class KingfisherPostPipeline(object):
         url, headers = self.api_url
         for completed in item:
             
-            local_path = completed.get("local_path")
-            with open(local_path) as json_file:
-                json_from_file = json.load(json_file)
-
-            completed['data'] = json_from_file
-
             headers['Content-Type'] = 'application/json'
 
             post_request = Request(
                 url=url,
                 method='POST',
                 body=json.dumps(completed),
-                headers=headers
+                headers=headers,
+                callback=self.finish
             )
             self.crawler.engine.crawl(post_request, spider)
         
-        raise DropItem("Items posted..")
+        raise DropItem("Response from [{}] posted to API.".format(completed.get('url')))
+
+    def finish(self, response):
+        # This stops Scrapy from automatically passing the response from the API to the Files pipeline
+        pass
