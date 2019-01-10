@@ -66,7 +66,6 @@ class KingfisherFilesPipeline(FilesPipeline):
                     "file_name": local_path,
                     "url": file_url,
                     "data_type": item.get("data_type"),
-                    "file_encoding": "utf-8",
                     "local_path": local_path
                 }
 
