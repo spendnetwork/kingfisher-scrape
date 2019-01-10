@@ -64,8 +64,8 @@ class KingfisherFilesPipeline(FilesPipeline):
                     "collection_data_version": start_time.strftime("%Y-%m-%d %H:%M:%S"),
                     "collection_sample": is_sample,
                     "file_name": local_path,
-                    "file_url": file_url,
-                    "file_data_type": item.get("data_type"),
+                    "url": file_url,
+                    "data_type": item.get("data_type"),
                     "file_encoding": "utf-8",
                     "local_path": local_path
                 }
