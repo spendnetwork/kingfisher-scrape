@@ -44,9 +44,9 @@ class KingfisherFilesPipeline(FilesPipeline):
         """
 
         if hasattr(info.spider, 'sample')  and info.spider.sample == 'true':
-            is_sample = 1
+            is_sample = True
         else:
-            is_sample = 0
+            is_sample = False
         
         files_store = info.spider.crawler.settings.get("FILES_STORE")
 
