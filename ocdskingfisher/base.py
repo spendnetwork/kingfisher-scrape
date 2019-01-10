@@ -247,7 +247,7 @@ class Source:
             body = {
                 'collection_source': self.source_id,
                 'collection_data_version': self.data_version,
-                'collection_sample': 1 if self.sample else 0,
+                'collection_sample': self.sample,
                 'file_name': data['filename'],
                 'url': data['url'],
                 'data_type': data['data_type'],
@@ -275,7 +275,7 @@ class Source:
             body = {
                 'collection_source': self.source_id,
                 'collection_data_version': self.data_version,
-                'collection_sample': 1 if self.sample else 0,
+                'collection_sample': self.sample,
                 'file_name': data['filename'],
                 'url': data['url'],
                 'data_type': data['data_type'],
