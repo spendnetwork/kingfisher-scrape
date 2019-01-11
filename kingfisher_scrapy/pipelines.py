@@ -111,11 +111,12 @@ class KingfisherPostPipeline(object):
                 method='POST',
                 body=json.dumps(completed),
                 headers=headers,
+                priority=10,
                 callback=self.finish
             )
             self.crawler.engine.crawl(post_request, spider)
 
-        raise DropItem("Response from [{}] posted to API.".format(completed.get('url')))
+            raise DropItem("Response from [{}] posted to API.".format(completed.get('url')))
 
     def finish(self, response):
         # This stops Scrapy from automatically passing the response from the API to the Files pipeline
