@@ -78,6 +78,8 @@ FILES_STORE = 'data'
 KINGFISHER_API_URI = os.environ.get('KINGFISHER_API_URI')
 KINGFISHER_API_KEY = os.environ.get('KINGFISHER_API_KEY')
 KINGFISHER_API_LOCAL_DIRECTORY = os.environ.get('KINGFISHER_API_LOCAL_DIRECTORY')
+KINGFISHER_PARAGUAY_REQUEST_TOKEN = "Basic " \
+    "MDAxNWMwZTktNDMyZC00MDFmLTlmZjYtNmQxZWQ0NjA3YWUzOmZiM2RiOWEzLTdmZGUtNDA5OC1hOWM1LTg5ZWE0ZGU0ZGNmNA=="
 
 # This is used for some legacy environment variables - not needed for new installs
 if not KINGFISHER_API_URI and os.environ.get('KINGFISHER_API_FILE_URI'):
