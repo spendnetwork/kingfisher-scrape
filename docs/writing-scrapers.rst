@@ -1,3 +1,5 @@
+.. _writing-scrapers:
+
 Writing OCDS Kingfisher scrapers with Scrapy
 --------------------------------------------
 
