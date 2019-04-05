@@ -11,10 +11,6 @@ class ParaguayHacienda(ParaguayBase):
 
     base_list_url = 'https://datos.hacienda.gov.py:443/odmh-api-v1/rest/api/v1/pagos/cdp?page={}'
     release_ids = []
-    request_time = None
-    request_limit = 10000
-    request_time_limit = 14.0
-    request_limit_header = 'x-rate-limit-remaining'
     client_secret = None
 
     def start_requests(self):
@@ -22,16 +18,13 @@ class ParaguayHacienda(ParaguayBase):
         self.client_secret = self.settings.get('KINGFISHER_PARAGUAY_HACIENDA_CLIENT_SECRET')
         if self.request_token is None or self.client_secret is None:
             raise RuntimeError('No request token or client secret available')
-        self.get_access_token(first=True)
         # Paraguay Hacienda has a service that return all the ids that we need to get the releases packages
         # so we first iterate over this list that is paginated
-        yield AuthTokenRequest(self.base_list_url.format(1), meta={'meta': True, 'first': True})
+        yield AuthTokenRequest(self.base_list_url.format(1), meta={'meta': True, 'first': True, 'access_token': self.get_access_token()})
 
     def parse(self, response):
         if response.status == 200:
 
-            # When we have a 200 response, we update the number of remaining request calling the get access token method
-            self.get_access_token(response=response)
             data = json.loads(response.body_as_unicode())
             base_url = 'https://datos.hacienda.gov.py:443/odmh-api-v1/rest/api/v1/ocds/release-package/{}'
 
@@ -41,7 +34,7 @@ class ParaguayHacienda(ParaguayBase):
                 for page in range(2,  total_pages+1):
                     yield AuthTokenRequest(
                         url=self.base_list_url.format(page),
-                        meta={'meta': True, 'first': False},
+                        meta={'meta': True, 'first': False, 'access_token': self.get_access_token()},
                         dont_filter=True
                     )
 
@@ -58,7 +51,8 @@ class ParaguayHacienda(ParaguayBase):
                         yield AuthTokenRequest(
                             url=base_url.format(row['idLlamado']),
                             meta={'meta': False, 'first': False,
-                                  'kf_filename': 'release-{}.json'.format(row['idLlamado'])},
+                                  'kf_filename': 'release-{}.json'.format(row['idLlamado']),
+                                  'access_token': self.get_access_token()},
                             dont_filter=True
                         )
             else:
@@ -69,12 +63,17 @@ class ParaguayHacienda(ParaguayBase):
                     'data_type': 'release_package',
                     'url': response.request.url,
                 }
-        # If the response is 401 it means that the auth token that was generated when the request was yield it is
-        # already expired so we make the request again with the new token
         elif response.status == 401:
+            # request a new access token if needed
+            self.logger.info('401! Authorization header: {}'.format(response.request.meta['access_token']))
+            if response.request.meta['access_token'] == self.get_access_token():
+                self.access_token = self.generate_access_token()
+
+            meta = response.request.meta.copy()
+            meta['access_token'] = self.get_access_token()
             yield AuthTokenRequest(
                 url=response.request.url,
-                meta=response.request.meta
+                meta=meta
             )
 
         else:
@@ -86,16 +85,17 @@ class ParaguayHacienda(ParaguayBase):
             }
 
     def generate_access_token(self):
-
-        correct = False
-        token = ''
-        while not correct:
+        token = None
+        attempts = 1
+        self.logger.info('Requesting new access token...')
+        while token is None and attempts <= ParaguayHacienda.max_auth_attempts:
             r = requests.post("https://datos.hacienda.gov.py:443/odmh-api-v1/rest/api/v1/auth/token",
                               headers={"Authorization": self.request_token},
                               json={"clientSecret": "%s" % self.client_secret})
-            try:
+            if 'accessToken' in r.json():
                 token = r.json()['accessToken']
-                correct = True
-            except requests.exceptions.RequestException:
-                correct = False
+            attempts += 1
+        if token is None:
+            raise RuntimeException('Negociation of an access token has failed {} times.'.format(attempts))
+        self.logger.info('New access token retrieved: {}'.format(token))
         return token
