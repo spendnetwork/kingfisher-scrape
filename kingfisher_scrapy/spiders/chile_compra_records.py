@@ -24,11 +24,17 @@ class ChileCompraRecords(BaseSpider):
                 meta={'kf_filename': 'sample.json'}
             )
             return
-        current_year = datetime.datetime.now().year + 1
-        current_month = datetime.datetime.now().month
-        for year in range(2008, current_year):
+        until_year = datetime.datetime.now().year + 1
+        until_month = datetime.datetime.now().month
+        start_year = 2008
+        if hasattr(self, 'year'):
+            start_year = int(self.year)
+            until_year = start_year + 1
+            until_month = 12
+        for year in range(start_year, until_year):
             for month in range(1, 13):
-                if current_year == year and month > current_month:
+                # just scrape until the current month when the until year = current year
+                if (until_year-1) == year and month > until_month:
                     break
                 yield scrapy.Request(
                     url='https://apis.mercadopublico.cl/OCDS/data/listaA%C3%B1oMes/{}/{:02d}'.format(year, month),
@@ -52,13 +58,7 @@ class ChileCompraRecords(BaseSpider):
                     )
 
             else:
-                self.save_response_to_disk(response, response.request.meta['kf_filename'])
-                yield {
-                    'success': True,
-                    'file_name': response.request.meta['kf_filename'],
-                    'data_type': 'record_package',
-                    'url': response.request.url,
-                }
+                yield self.save_response_to_disk(response, response.request.meta['kf_filename'], data_type='record_package')
         else:
             yield {
                 'success': False,

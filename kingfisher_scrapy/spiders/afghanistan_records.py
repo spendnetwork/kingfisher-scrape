@@ -1,4 +1,5 @@
 import json
+import time
 
 import scrapy
 
@@ -47,13 +48,20 @@ class AfghanistanRecords(BaseSpider):
     def parse_record(self, response):
         if response.status == 200:
 
-            self.save_response_to_disk(response, response.request.meta['kf_filename'])
-            yield {
-                'success': True,
-                'file_name': response.request.meta['kf_filename'],
-                "data_type": "record",
-                "url": response.request.url,
-            }
+            yield self.save_response_to_disk(response, response.request.meta['kf_filename'], data_type="record")
+
+        elif response.status == 429:
+            self.crawler.engine.pause()
+            time.sleep(600)  # 10 minutes
+            self.crawler.engine.unpause()
+            url = response.request.url
+            # This is dangerous as we might get stuck in a loop here if we always get a 429 response. Try this for now.
+            yield scrapy.Request(
+                    url=url,
+                    meta={'kf_filename': url.split('/')[-1]+'.json'},
+                    callback=self.parse_record,
+                    dont_filter=True,
+                )
         else:
             yield {
                 'success': False,
