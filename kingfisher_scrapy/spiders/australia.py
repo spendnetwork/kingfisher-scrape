@@ -21,8 +21,7 @@ class Australia(BaseSpider):
 
         if self.is_sample():
             yield scrapy.Request(
-                url='https://api.tenders.gov.au/ocds/findByDates/contractPublished/2018-01-01T00:00:00Z/2018-12-31T23'
-                    ':59:59Z',
+                url='https://api.tenders.gov.au/ocds/findByDates/contractPublished/2018-01-01T00:00:00Z/2018-12-31T23:59:59Z',
                 meta={'kf_filename': 'year-2018.json'}
             )
         else:
