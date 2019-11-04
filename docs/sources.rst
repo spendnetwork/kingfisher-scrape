@@ -13,7 +13,8 @@ These sources are available as Scrapy spiders:
   *  canada_montreal
   *  chile_compra_releases
   *  chile_compra_records - you can pass the additional `year` parameter to this scraper, to indicate what year download.
-  *  colombia - you can pass the additional `page` parameter to this scraper, to indicate what page to start on.
+  *  colombia - you can pass the additional `page` parameter to this scraper, to indicate what page to start on,
+  and also you can pass the additional `year` parameter to this scraper, to indicate what year download.
   *  dhangadhi
   *  digiwhist_armenia
   *  digiwhist_austria
@@ -59,16 +60,18 @@ These sources are available as Scrapy spiders:
   *  mexico_cdmx
   *  mexico_grupo_aeroporto
   *  mexico_inai
-  *  moldova_old
   *  mexico_jalisco
-  *  moldova_releases
+  *  moldova
+  *  moldova_old
   *  moldova_records
+  *  moldova_releases
   *  paraguay_dncp_releases
   *  paraguay_dncp_records
   *  paraguay_hacienda
   *  scotland
   *  uganda
   *  uk_contracts_finder
+  *  uk_fts
   *  uruguay
   *  uruguay_historical
   *  zambia
