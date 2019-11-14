@@ -8,8 +8,13 @@ Full documentation can be found on [ReadTheDocs](https://kingfisher-scrape.readt
 
 
 # Run Spider on webapps
-curl http://104.155.19.156:6800/schedule.json -d project=king -d spider=somespider
+    curl http://104.155.19.156:6800/schedule.json -d project=king -d spider=somespider
+    curl http://104.155.19.156/schedule.json -d project=kingfisher -d spider=chile_compra_records -d note="Started by Sim."
+    curl http://104.155.19.156/schedule.json -d project=kingfisher -d spider=uk_contracts_finder -d note="Started by Sim."
 
+### Cancel
+
+    curl http://104.155.19.156/cancel.json -d project=kingfisher -d job=ed2eeae0053611ea8d7442010af0c9b1
 
 # Install
 
@@ -19,3 +24,12 @@ curl http://104.155.19.156:6800/schedule.json -d project=king -d spider=somespid
 symlink drive
 
     ln -s /mnt/disks/disk-1/sim/kingfisher-scrape data
+    
+# Start servers
+
+# Webapps setup
+    
+    cd /mnt/disks/disk-1
+    mkdir kingfisher
+    
+

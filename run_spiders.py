@@ -4,10 +4,11 @@ import requests
 def run_spiders():
 
     spiders = [
-        "canada_buyandsell",
-        "canada_montreal",
+        # "canada_buyandsell",
+        # "canada_montreal",
         # "chile_compra_records",
         # "chile_compra_releases", #  Scraper needs fixing, not ocds format in API, need to follow links
+        "colombia",
         # "dhangadhi",
         # "georgia_opendata",
         # "georgia_records",
@@ -25,10 +26,10 @@ def run_spiders():
         # "moldova_releases",
 
         # Error authentication_credentials_missing
-        # "paraguay_base",
-        # "paraguay_dncp_records",
-        # "paraguay_dncp_releases",
-        # "paraguay_hacienda",
+        "paraguay_base",
+        "paraguay_dncp_records",
+        "paraguay_dncp_releases",
+        "paraguay_hacienda",
 
         # "scotland",
 
@@ -36,8 +37,21 @@ def run_spiders():
         # "uganda",
 
 
-        # "uruguay",
         # "zambia",
+
+        # "afghanistan_records",
+        # "afghanistan_releases",
+        # "armenia",
+        # "australia",
+        # "australia_nsw",
+        # "buenos_aires",
+        # "honduras_cost",
+        # "honduras_oncae",
+        # "indonesia_bandung",
+        # "uk_contracts_finder",
+        # "uk_fts",
+        # "uruguay",
+        # "uruguay_historical",
         
     ]
     for s in spiders:
