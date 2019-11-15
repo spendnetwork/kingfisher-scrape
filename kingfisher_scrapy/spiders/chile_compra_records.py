@@ -41,7 +41,7 @@ class ChileCompraRecords(BaseSpider):
                 url = 'https://apis.mercadopublico.cl/OCDS/data/listaA%C3%B1oMes/{}/{:02d}?offset={}&limit={}'.format(year, month, offset, limit)
                 yield scrapy.Request(
                     url=url,
-                    meta={'kf_filename': 'year-{}-month-{:02d}-{}-{}.json'.format(year, month, offset, limit)}
+                    meta={'kf_filename': 'year-{}-month-{:02d}-{}-{}.json'.format(year, month, offset, offset+limit)}
                 )
 
     def parse(self, response):
@@ -74,7 +74,7 @@ class ChileCompraRecords(BaseSpider):
                             url = 'https://apis.mercadopublico.cl/OCDS/data/listaA%C3%B1oMes/{}/{}?limit={}&offset={}'.format(year, month, limit, new_offset)
                             yield scrapy.Request(
                                 url=url,
-                                meta={'kf_filename': 'year-{}-month-{}-{}-{}.json'.format(year, month, new_offset, limit)}
+                                meta={'kf_filename': 'year-{}-month-{}-{}-{}.json'.format(year, month, new_offset, offset+limit)}
                             )
                             new_offset += limit
 

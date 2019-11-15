@@ -4,3 +4,5 @@ install:
 
 	git clone git@github.com:spendnetwork/kingfisher-process.git
 	cd kingfisher-process; pipenv install; cd ..
+
+run:

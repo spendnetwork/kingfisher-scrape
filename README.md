@@ -16,16 +16,19 @@ Full documentation can be found on [ReadTheDocs](https://kingfisher-scrape.readt
 
     curl http://104.155.19.156/cancel.json -d project=kingfisher -d job=ed2eeae0053611ea8d7442010af0c9b1
 
-# Install
+# Install on webapps
 
-    clone
     mnt drive
 
-symlink drive
+clone to
 
-    ln -s /mnt/disks/disk-1/sim/kingfisher-scrape data
+    /mnt/disks/disk-1/kingfisher/kingfisher-scrape
     
 # Start servers
+
+start scrapy
+
+    
 
 # Webapps setup
     
