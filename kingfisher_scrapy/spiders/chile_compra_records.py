@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import datetime
 import json
 
@@ -20,7 +21,7 @@ class ChileCompraRecords(BaseSpider):
     def start_requests(self):
         if self.is_sample():
             yield scrapy.Request(
-                url='https://apis.mercadopublico.cl/OCDS/data/listaA%C3%B1oMes/2017/10',
+                url='https://apis.mercadopublico.cl/OCDS/data/listaAñoMes/2017/10/0/1000',
                 meta={'kf_filename': 'sample.json'}
             )
             return
@@ -38,10 +39,10 @@ class ChileCompraRecords(BaseSpider):
                     continue
                 limit = 1000
                 offset = 0
-                url = 'https://apis.mercadopublico.cl/OCDS/data/listaA%C3%B1oMes/{}/{:02d}?offset={}&limit={}'.format(year, month, offset, limit)
+                url = 'https://apis.mercadopublico.cl/OCDS/data/listaA%C3%B1oMes/{}/{:02d}/{}/{}'.format(year, month, offset, limit)
                 yield scrapy.Request(
                     url=url,
-                    meta={'kf_filename': 'year-{}-month-{:02d}-{}-{}.json'.format(year, month, offset, offset+limit)}
+                    meta={'kf_filename': 'year-{}-month-{:02d}-{}-{}.json'.format(year, month, offset, offset+limit-1)}
                 )
 
     def parse(self, response):
@@ -71,10 +72,10 @@ class ChileCompraRecords(BaseSpider):
                     if not self.is_sample():
                         new_offset = offset + limit
                         while new_offset < total:
-                            url = 'https://apis.mercadopublico.cl/OCDS/data/listaA%C3%B1oMes/{}/{}?limit={}&offset={}'.format(year, month, limit, new_offset)
+                            url = 'https://apis.mercadopublico.cl/OCDS/data/listaA%C3%B1oMes/{}/{}/{}/{}'.format(year, month, offset, limit)
                             yield scrapy.Request(
                                 url=url,
-                                meta={'kf_filename': 'year-{}-month-{}-{}-{}.json'.format(year, month, new_offset, offset+limit)}
+                                meta={'kf_filename': 'year-{}-month-{}-{}-{}.json'.format(year, month, offset, offset + limit - 1)}
                             )
                             new_offset += limit
 
